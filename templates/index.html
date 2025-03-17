@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Review Sentiment Analysis</title>
+</head>
+<body>
+    <h1>Movie Review Sentiment Analysis</h1>
+    <form id="reviewForm">
+        <textarea id="review" name="review" rows="4" cols="50" placeholder="Enter your movie review..."></textarea><br><br>
+        <button type="submit">Analyze</button>
+    </form>
+    <h2>Result:</h2>
+    <p id="result"></p>
+    <h2>Sentiment Insights:</h2>
+    <div id="insights"></div>
+
+    <script>
+        document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const review = document.getElementById('review').value;
+            const response = await fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ review })
+            });
+            const data = await response.json();
+            document.getElementById('result').innerText = `Sentiment: ${data.sentiment}, Confidence: ${data.confidence}`;
+
+            // Fetch insights
+            const insightsResponse = await fetch('/insights');
+            const insightsHTML = await insightsResponse.text();
+            document.getElementById('insights').innerHTML = insightsHTML;
+        });
+    </script>
+</body>
+</html>
