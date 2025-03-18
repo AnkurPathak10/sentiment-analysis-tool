@@ -6,6 +6,8 @@
     <title>Sentiment Analysis Tool</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Plotly JS -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <!-- Custom CSS -->
     <style>
         body {
@@ -73,7 +75,8 @@
             <div class="col-md-8">
                 <div class="card p-4">
                     <h2 class="text-center mb-4">Sentiment Insights</h2>
-                    <div id="insights"></div>
+                    <a href="/insights" class="btn btn-primary w-100">Show Insights</a>
+                    <div id="insights" class="mt-4"></div>
                 </div>
             </div>
         </div>
@@ -91,7 +94,7 @@
                 alert('Please enter a review.');
                 return;
             }
-
+    
             const response = await fetch('/analyze', {
                 method: 'POST',
                 headers: {
@@ -100,22 +103,88 @@
                 body: JSON.stringify({ review })
             });
             const data = await response.json();
-
+    
             // Display result
             let sentimentClass = '';
             if (data.sentiment === 'POSITIVE') sentimentClass = 'sentiment-positive';
             else if (data.sentiment === 'NEUTRAL') sentimentClass = 'sentiment-neutral';
             else sentimentClass = 'sentiment-negative';
-
+    
             document.getElementById('result').innerHTML = `
                 <h3 class="${sentimentClass}">Sentiment: ${data.sentiment}</h3>
                 <p>Confidence: ${(data.confidence * 100).toFixed(2)}%</p>
             `;
+        });
+    
+        // Add event listener for the "Show Insights" button
+        document.getElementById('showInsights').addEventListener('click', async () => {
+            console.log("Show Insights button clicked");  // Debugging: Log button click
+            try {
+                const insightsResponse = await fetch('/insights');
+                if (!insightsResponse.ok) {
+                    console.error("Error fetching insights:", insightsResponse.status, insightsResponse.statusText);
+                    alert("Error fetching insights. Please try again.");
+                    return;
+                }
+                const insightsHTML = await insightsResponse.text();
+                console.log("Insights Response:", insightsHTML);  // Debugging: Log insights response
+                document.getElementById('insights').innerHTML = insightsHTML;
+            } catch (error) {
+                console.error("Error fetching insights:", error);
+                alert("Error fetching insights. Please try again.");
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+    <script>
+        const socket = io();
+    
+        // Real-time sentiment analysis as the user types
+        document.getElementById('review').addEventListener('input', (e) => {
+            const review = e.target.value;
+            if (review) {
+                socket.emit('analyze_review', review);
+            }
+        });
+    
+        // Display real-time sentiment result
+        socket.on('sentiment_result', (data) => {
+            let sentimentClass = '';
+            if (data.sentiment === 'POSITIVE') sentimentClass = 'sentiment-positive';
+            else if (data.sentiment === 'NEUTRAL') sentimentClass = 'sentiment-neutral';
+            else sentimentClass = 'sentiment-negative';
+    
+            document.getElementById('result').innerHTML = `
+                <h3 class="${sentimentClass}">Sentiment: ${data.sentiment}</h3>
+                <p>Confidence: ${(data.confidence * 100).toFixed(2)}%</p>
+            `;
+        });
+    </script>
+    <div id="recommendations" class="mt-4"></div>
 
-            // Fetch insights
-            const insightsResponse = await fetch('/insights');
-            const insightsHTML = await insightsResponse.text();
-            document.getElementById('insights').innerHTML = insightsHTML;
+    <script>
+        socket.on('sentiment_result', (data) => {
+            let sentimentClass = '';
+            if (data.sentiment === 'POSITIVE') sentimentClass = 'sentiment-positive';
+            else if (data.sentiment === 'NEUTRAL') sentimentClass = 'sentiment-neutral';
+            else sentimentClass = 'sentiment-negative';
+    
+            document.getElementById('result').innerHTML = `
+                <h3 class="${sentimentClass}">Sentiment: ${data.sentiment}</h3>
+                <p>Confidence: ${(data.confidence * 100).toFixed(2)}%</p>
+            `;
+    
+            // Display recommended movies
+            if (data.recommended_movies.length > 0) {
+                document.getElementById('recommendations').innerHTML = `
+                    <h4>Recommended Movies:</h4>
+                    <ul>
+                        ${data.recommended_movies.map(movie => `<li>${movie}</li>`).join('')}
+                    </ul>
+                `;
+            } else {
+                document.getElementById('recommendations').innerHTML = '';
+            }
         });
     </script>
 </body>

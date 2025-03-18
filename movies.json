@@ -1,0 +1,9 @@
+[
+    {"title": "The Shawshank Redemption", "sentiment": "POSITIVE"},
+    {"title": "The Godfather", "sentiment": "POSITIVE"},
+    {"title": "The Dark Knight", "sentiment": "POSITIVE"},
+    {"title": "Inception", "sentiment": "POSITIVE"},
+    {"title": "The Room", "sentiment": "NEGATIVE"},
+    {"title": "Birdemic", "sentiment": "NEGATIVE"},
+    {"title": "Troll 2", "sentiment": "NEGATIVE"}
+]

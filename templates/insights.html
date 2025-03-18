@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Insights</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+        }
+        .table {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .table th {
+            background-color: #667eea;
+            color: white;
+        }
+        .table td {
+            vertical-align: middle;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Sentiment Analysis Tool</a>
+        </div>
+    </nav>
+
+    <!-- Insights Content -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <!-- Sentiment Distribution -->
+                <div class="card p-4 mb-4">
+                    <h2 class="text-center mb-4">Sentiment Distribution</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Sentiment</th>
+                                <th>Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in sentiment_counts %}
+                            <tr>
+                                <td>{{ row.Sentiment }}</td>
+                                <td>{{ row.Count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Sentiment Trends -->
+                <div class="card p-4 mb-4">
+                    <h2 class="text-center mb-4">Sentiment Trends</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Sentiment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in trends_df %}
+                            <tr>
+                                <td>{{ row.timestamp }}</td>
+                                <td>{{ row.sentiment }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Top Keywords -->
+                <div class="card p-4 mb-4">
+                    <h2 class="text-center mb-4">Top Keywords</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Word</th>
+                                <th>Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in top_keywords_df %}
+                            <tr>
+                                <td>{{ row.Word }}</td>
+                                <td>{{ row.Count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
