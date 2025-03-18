@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.express as px
 from collections import defaultdict
 from datetime import datetime
+from serverless_wsgi import handle_request
 
 app = Flask(__name__)
 
@@ -82,5 +83,6 @@ def insights():
     
     return charts_html
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Vercel handler
+def vercel_handler(event, context):
+    return handle_request(app, event, context)
