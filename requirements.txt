@@ -1,5 +1,5 @@
 Flask==2.3.2
-pandas==2.0.3
+pandas==2.1.4
 plotly==5.15.0
 serverless-wsgi==2.0.2
 textblob==0.17.1
